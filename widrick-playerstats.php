@@ -1,17 +1,18 @@
 <?php
 /*
-Plugin Name: Minecraft Player Stats
+Plugin Name: Widrick Minecraft Stats
 Plugin URI: https://example.com
 Description: Displays Player stats from minecraft server files
 Version: 0.0.1
 Author: Daniel Widrick
 Author URI: http://widrick.net
-Text Domain: miencraft-player-stats
+Text Domain: widrick-miencraft-stats
 Domain Path: /languages
 */
 
 
-function widrick_playerStats_sortUsers($userA, $userB) {
+
+function widrick_playerStats_sortUsers_KDRatio($userA, $userB) {
 	$userADeaths = $userA->stats->{'stat.deaths'} < 1 ? 1 : $userA->stats->{'stat.deaths'};
 	$userBDeaths = $userB->stats->{'stat.deaths'} < 1 ? 1 : $userB->stats->{'stat.deaths'};
 	
@@ -30,28 +31,56 @@ class widrick_playerStats_Widget extends WP_Widget {
 		);
 		parent::__construct('widrick_playerStats_Widget','Minecraft Player Stats',$widget_options);
 	}
+	
+	public function assembleServerStats($serverDirs) {
+		if(!is_array($serverDirs))
+			$serverDirs = Array( 0 => $serverDirs );
+
+		$users = Array();
+		foreach($serverDirs as $serverDir) {
+			$directory = getcwd() . '/server-stats/' . $serverDir . '/';
+			
+			$usernames_json = file_get_contents($directory . 'usercache.json');
+			$usernames = json_decode($usernames_json);
+			$users = array_merge($users,$usernames);
+		}
+		
+		$users = array_unique($users,SORT_REGULAR);
+		foreach($users as $index => $user) {
+			$users[$index]->stats = new stdClass();
+
+			foreach($serverDirs as $serverStatDir) {
+				$statDirectory = $directory = getcwd() . '/server-stats/' . $serverDir . '/stats/';
+				$statFile = $statDirectory . $user->uuid . '.json';
+				if(stat($statFile)) {
+					$stats=json_decode(file_get_contents($statFile));
+					$statsArray = get_object_vars($stats);
+					foreach($statsArray as $statKey => $statValue) {
+						if(isset($users[$index]->stats->{$statKey}) && is_int($users[$index]->stats->{$statKey}))
+							$users[$index]->stats->{$statKey} += $statValue;
+						else
+							$users[$index]->stats->{$statKey} = $statValue;
+					}
+				}
+			}
+		}
+		return $users;
+	}
 
 	
 	public function widget( $args, $instance) {
 		$title = apply_filters('widget_title',$instance['title']);
-		$directory = getcwd() . '/server-stats/' . $instance['serverDir'] . '/';
 
-		$usernames_json = file_get_contents($directory . 'usercache.json');
-		$usernames = json_decode($usernames_json);
-
-		$users = array();
+		$serverDirs = explode(',',$instance['serverDir']);
+		$users = $this->assembleServerStats($serverDirs);
+		usort($users,'widrick_playerStats_sortUsers_KDRatio');
+		
 		
 		$html = $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
 		$html .= "<table class='widrick_playerStats'><tr><th width='65px'  style='white-space:nowrap'>Rank</th><th>Name</th><th width='54px' style='white-space:nowrap'>K</th><th width='54px' style='white-space:nowrap'>D</th></tr>";
 		$rank = 1;
 		
 
-		foreach($usernames as $user)
-		{
-			$user->stats = json_Decode( file_get_contents($directory . '/stats/' . $user->uuid . '.json') );
-			$users[] = $user;
-		}
-		usort($users,'widrick_playerStats_sortUsers');
 		foreach($users as $user)
 		{
 			$html .= "<tr><td class='widrick_playerStats_rank' width='20%'>$rank<img src='https://cravatar.eu/helmhead/".trim($user->name)."/10.png' /></td>";
@@ -68,9 +97,6 @@ class widrick_playerStats_Widget extends WP_Widget {
 				break;
 		}
 		$html .= "</table>";
-
-		//var_dump($users);
-		$html .= $instance['serverDir'];
 		$html .= $args['after_widget'];
 		echo $html;
 	}
