@@ -10,6 +10,17 @@ Text Domain: miencraft-player-stats
 Domain Path: /languages
 */
 
+
+function widrick_playerStats_sortUsers($userA, $userB) {
+	$userADeaths = $userA->stats->{'stat.deaths'} < 1 ? 1 : $userA->stats->{'stat.deaths'};
+	$userBDeaths = $userB->stats->{'stat.deaths'} < 1 ? 1 : $userB->stats->{'stat.deaths'};
+	
+	$userAKD = $userA->stats->{'stat.mobKills'} / $userADeaths;
+	$userBKD = $userB->stats->{'stat.mobKills'} / $userBDeaths;
+
+	return ($userAKD < $userBKD) ? 1 : -1;
+}
+
 class widrick_playerStats_Widget extends WP_Widget {
 	
 	public function __construct() {
@@ -19,6 +30,8 @@ class widrick_playerStats_Widget extends WP_Widget {
 		);
 		parent::__construct('widrick_playerStats_Widget','Minecraft Player Stats',$widget_options);
 	}
+
+	
 	public function widget( $args, $instance) {
 		$title = apply_filters('widget_title',$instance['title']);
 		$directory = getcwd() . '/server-stats/' . $instance['serverDir'] . '/';
@@ -27,13 +40,36 @@ class widrick_playerStats_Widget extends WP_Widget {
 		$usernames = json_decode($usernames_json);
 
 		$users = array();
+		
+		$html = $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
+		$html .= "<table class='widrick_playerStats'><tr><th width='65px'  style='white-space:nowrap'>Rank</th><th>Name</th><th width='54px' style='white-space:nowrap'>K</th><th width='54px' style='white-space:nowrap'>D</th></tr>";
+		$rank = 1;
+		
+
 		foreach($usernames as $user)
 		{
 			$user->stats = json_Decode( file_get_contents($directory . '/stats/' . $user->uuid . '.json') );
 			$users[] = $user;
 		}
+		usort($users,'widrick_playerStats_sortUsers');
+		foreach($users as $user)
+		{
+			$html .= "<tr><td class='widrick_playerStats_rank' width='20%'>$rank<img src='https://cravatar.eu/helmhead/".trim($user->name)."/10.png' /></td>";
+			$rank++;
+			if(strlen($user->name) > 12)
+				$displayName = substr($user->name,0,12) . '...';
+			else
+				$displayName = $user->name;
+			$html .= "<td class='widrick_playerStats_name' style='white-space:nowrap; max-width:50%'>". $displayName . "</td>";
+			$html .= "<td class='widrick_playerStats_kills' width='1px'>".($user->stats->{"stat.mobKills"} < 1 ? 0 : $user->stats->{"stat.mobKills"}) ."</td>";
+			$html .= "<td class='widrick_playerStats_deaths' width'1px'>".($user->stats->{"stat.deaths"} < 1 ? 0 : $user->stats->{'stat.deaths'}) ."</td>";
+			$html .= '</tr>';
+			if($rank > 7)
+				break;
+		}
+		$html .= "</table>";
+
 		//var_dump($users);
-		$html = $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
 		$html .= $instance['serverDir'];
 		$html .= $args['after_widget'];
 		echo $html;
