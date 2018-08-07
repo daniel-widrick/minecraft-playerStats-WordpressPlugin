@@ -11,6 +11,7 @@ Domain Path: /languages
 */
 
 require_once(__dir__ . '/widrick-playerstats-class.php');
+require_once(__dir__ . '/widrick-playerstats-shortcodes.php');
 
 class widrick_playerStats_Widget extends WP_Widget {
 	

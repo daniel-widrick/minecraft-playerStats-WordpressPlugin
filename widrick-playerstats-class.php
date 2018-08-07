@@ -26,6 +26,7 @@ class widrick_playerStats {
 	
 
 	public $serverList;
+	public $statNames;
 
 	public function __construct() {
 		$widget_options = array(
@@ -36,6 +37,7 @@ class widrick_playerStats {
 	}
 	
 	public function assembleServerStats($serverDirs) {
+		$this->statNames = array();
 		if(!is_array($serverDirs))
 			$serverDirs = Array( 0 => $serverDirs );
 
@@ -65,16 +67,21 @@ class widrick_playerStats {
 							$users[$index]->stats->{$statKey} += $statValue;
 						else
 							$users[$index]->stats->{$statKey} = $statValue;
+						/*if(!isset($this->statNames[$statKey]))
+							$this->statNames[$statKey] = true;*/
 					}
 				}
 			}
 		}
+		//ksort($this->statNames);
 		return $users;
 	}
 
 	private function getServerList() {
 		$dir = getcwd() . '/server-stats/';
-		$dirArray = array_diff(scandir($dir), array('..','.'));
+		$dirArray = Array();
+		if(is_dir($dir))
+			$dirArray = array_diff(scandir($dir), array('..','.'));
 		
 		$this->serverList = $dirArray;
 	}

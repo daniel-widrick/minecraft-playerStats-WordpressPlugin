@@ -1,0 +1,9 @@
+table.widrick_fullPlayerStatsTable {
+	width: auto;
+	min-width: 0;
+	display: table;
+}
+
+div.widrick_fullPlayerStatsContainer {
+	overflow: auto;
+}
