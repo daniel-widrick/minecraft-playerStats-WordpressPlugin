@@ -40,7 +40,9 @@ function widrick_playerStats_table_shortCode($atts, $conent = null) {
 	$html .= "</tr></thead><tbody>";
 
 	foreach($users as $user) {
-		$html .= '<tr><td>' . $user->name . '</td>';
+		$html .= '<tr><td nowrap style="overflow:hidden">';
+		$displayName = $user->name;
+		$html .= '<img src="https://cravatar.eu/helmhead/'. $user->name. '/20.png" />' . $yser->name . '</td>';
 		foreach($statNames as $statName => $statValue) {
 			$html .= '<td>';
 			if(isset($user->stats->{$statValue}))
