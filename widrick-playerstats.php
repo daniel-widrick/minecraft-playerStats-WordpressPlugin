@@ -44,19 +44,21 @@ class widrick_playerStats_Widget extends WP_Widget {
 			$usernames = json_decode($usernames_json);
 			$users = array_merge($users,$usernames);
 		}
-		
+		foreach($users as $key => $user) {
+			$users[$key]->expiresOn = 0;
+		}
 		$users = array_unique($users,SORT_REGULAR);
 		foreach($users as $index => $user) {
 			$users[$index]->stats = new stdClass();
 
 			foreach($serverDirs as $serverStatDir) {
-				$statDirectory = $directory = getcwd() . '/server-stats/' . $serverDir . '/stats/';
+				$statDirectory = $directory = getcwd() . '/server-stats/' . $serverStatDir . '/stats/';
 				$statFile = $statDirectory . $user->uuid . '.json';
-				if(stat($statFile)) {
+				if(file_exists($statFile)) {
 					$stats=json_decode(file_get_contents($statFile));
 					$statsArray = get_object_vars($stats);
 					foreach($statsArray as $statKey => $statValue) {
-						if(isset($users[$index]->stats->{$statKey}) && is_int($users[$index]->stats->{$statKey}))
+						if(isset($users[$index]->stats->{$statKey}) )
 							$users[$index]->stats->{$statKey} += $statValue;
 						else
 							$users[$index]->stats->{$statKey} = $statValue;
