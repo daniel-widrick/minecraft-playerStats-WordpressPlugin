@@ -46,7 +46,7 @@ function widrick_playerStats_table_shortCode($atts, $conent = null) {
 			if(isset($user->stats->{$statValue}))
 				$html .= $user->stats->{$statValue};
 			else
-				$html .= "&nbsp;";
+				$html .= "0";
 		}
 		$html .= '</tr>';
 	}
@@ -58,5 +58,5 @@ function widrick_playerStats_table_shortCode($atts, $conent = null) {
 
 wp_register_style('widrick_playerStats_shortcode',plugin_dir_url(__FILE__).'/widrick-playerstats.css');
 add_shortcode('widrick_playerstats','widrick_playerStats_table_shortCode');
-wp_enqueue_script('jquery.tablesorter',plugins_url('/jquery.tablesorter.min.js',__FILE__));
-wp_enqueue_script('jquery.tablesorter',plugins_url('/widrick_playerStats.js');
+wp_enqueue_script('jquery.tablesorter',plugin_dir_url(__FILE__).'/jquery.tablesorter.min.js',array('jquery'));
+wp_enqueue_script('widrick_playerstats',plugin_dir_url(__FILE__).'/widrick_playerStats.js',array('jquery.tablesorter'));
