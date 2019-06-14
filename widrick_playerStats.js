@@ -1,5 +1,3 @@
-
-
 jQuery(document).ready(function() {
 
 var tables = document.getElementsByClassName('widrick_fullPlayerStatsTable');
@@ -11,4 +9,8 @@ for(var i = 0; i < tables.length; i++)
 	jQuery(table).tablesorter();
 }
 
+	jQuery('#data-highlight tbody tr').click(function(e) {
+    jQuery('#data-highlight tbody tr').removeClass('highlighted');
+    jQuery(this).addClass('highlighted');
+})
 });

@@ -6,4 +6,67 @@ table.widrick_fullPlayerStatsTable {
 
 div.widrick_fullPlayerStatsContainer {
 	overflow: auto;
+	height:506px;
+}
+
+
+.tablesorter-header-inner {
+	white-space: nowrap;
+}
+
+.tablesorter-headerUnSorted .tablesorter-header-inner:after,
+.tablesorter-headerDesc .tablesorter-header-inner:after,
+.tablesorter-headerAsc .tablesorter-header-inner:after {
+	display: inline-block;
+    width: 10px;
+    content: "";
+    height: 20px;
+    background-size: 75%;
+    background-repeat: no-repeat;
+    vertical-align: text-top;
+	margin-left:0.4375em;
+}
+
+.tablesorter-headerUnSorted .tablesorter-header-inner:after {
+	background-image:url(http://mwagn.apt.widrick.net/wp-content/uploads/2018/08/arrows-unsorted.png);
+}
+
+.tablesorter-headerDesc .tablesorter-header-inner:after {
+	background-image:url(http://mwagn.apt.widrick.net/wp-content/uploads/2018/08/arrows-descending.png);
+}
+
+.tablesorter-headerAsc .tablesorter-header-inner:after {
+	background-image:url(http://mwagn.apt.widrick.net/wp-content/uploads/2018/08/arrows-ascending.png);
+}
+
+#data-highlight tr.highlighted td,
+#data-highlight tr.highlighted td:first-of-type{
+    background: #dcf5e7;
+}
+
+
+#data-highlight th,
+#data-highlight td:first-of-type {
+    position: sticky;
+    background: #fff;
+}
+
+#data-highlight th {
+	top: 0;
+	border-top: 1px solid #d1d1d1;
+}
+
+#data-highlight td:first-of-type,
+#data-highlight th:first-of-type {
+	left:0;
+	border-left: 1px solid #d1d1d1;
+}
+
+#data-highlight th:first-of-type {
+	z-index:1;
+}
+
+#data-highlight {
+	border-left: 0px;
+	border-top: 0px;
 }

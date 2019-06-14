@@ -17,6 +17,7 @@ function widrick_playerStats_whiteListed_stats() {
 	$stats['Horse Back'] = 'stat.horseOneCm';
 	$stats['Jumps'] = 'stat.jump';
 	$stats['Sessions'] = 'stat.leaveGame';
+	$stats['Slept'] = 'stat.sleepInBed';
 	return $stats;
 }
 function widrick_playerStats_table_shortCode($atts, $conent = null) {
@@ -30,7 +31,7 @@ function widrick_playerStats_table_shortCode($atts, $conent = null) {
 	usort($users,'widrick_playerStats_sortUsers_KDRatio');
 
 	$html = '<div class="widrick_fullPlayerStatsContainer">';
-	$html .= '<table class="widrick_fullPlayerStatsTable">';
+	$html .= '<table id="data-highlight" class="widrick_fullPlayerStatsTable">';
 	$html .= '<thead><tr><th>Player</th>';
 
 	$statNames = widrick_playerStats_whiteListed_stats();
@@ -42,7 +43,7 @@ function widrick_playerStats_table_shortCode($atts, $conent = null) {
 	foreach($users as $user) {
 		$html .= '<tr><td nowrap style="overflow:hidden">';
 		$displayName = $user->name;
-		$html .= '<img src="https://cravatar.eu/helmhead/'. $user->name. '/20.png" />' . $yser->name . '</td>';
+		$html .= '<img src="https://cravatar.eu/helmhead/'. $user->name. '/20.png" />' . $user->name . '</td>';
 		foreach($statNames as $statName => $statValue) {
 			$html .= '<td>';
 			if(isset($user->stats->{$statValue}))
